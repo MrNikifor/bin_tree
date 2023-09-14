@@ -51,7 +51,25 @@ class BinaryTree:
             return False
 
     def remove(self, value):
-        raise NotImplementedError
+        node, parent = self._search_(value, self.root)
+        if node:
+            if node.left is None and node.right is None:
+                new_child = None
+            elif node.left and node.right:
+                right_min_node, right_min_node_parent = BinaryTree._min_(node)
+                right_min_node_parent.left = None
+                right_min_node.left = node.left
+                right_min_node.right = node.right
+                new_child = right_min_node
+            else:
+                new_child = node.left if node.left else node.right
+            if node.value < parent.value:
+                parent.left = new_child
+            else:
+                parent.right = new_child
+            return True
+        else:
+            return False
 
     def _search_(self, value, node, parent=None):
         if node is None or node.value == value:
@@ -87,21 +105,21 @@ class BinaryTree:
 
     @staticmethod
     def _max_(node):
+        parent = None
         if node:
             while node.right:
+                parent = node
                 node = node.right
-            return node
-        else:
-            return None
+        return node, parent
 
     @staticmethod
     def _min_(node):
+        parent = None
         if node:
             while node.left:
+                parent = node
                 node = node.left
-            return node
-        else:
-            return None
+        return node, parent
 
     def print(self, node=None, filter_none=False):
         # TODO: is there a way to simplify this?
@@ -123,16 +141,26 @@ if __name__ == '__main__':
     tree.add(5)
     tree.add(10)
     tree.add(11)
+    tree.add(8)
     tree.add(4)
     tree.add(1)
     tree.add(3)
     tree.add(2)
-    print(len(tree))
-    print("---")
-    tree.print()
+    # print(len(tree))
+    # print("---")
+    # tree.print()
     print("---")
     tree.print(filter_none=True)
+    tree.remove(10)
     print("---")
-    tree.print(node=tree.search(4))
+    tree.print(filter_none=True)
+    tree.remove(8)
+    print("---")
+    tree.print(filter_none=True)
+    tree.remove(2)
+    print("---")
+    tree.print(filter_none=True)
+    # print("---")
+    # tree.print(node=tree.search(4))
     #print(tree.search(8))
     #print(tree.search(4))
