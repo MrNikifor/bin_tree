@@ -3,7 +3,16 @@ from types import NoneType
 
 
 class Node:
-    def __init__(self, value):
+    """
+    Basic tree Node class
+    Just store values
+
+    Methods:
+        __init__: constructor
+        __repr__: Obj representation logic for print and str methods
+        __lt__ and __gt__: allow to use compare operations '<' and '>'
+    """
+    def __init__(self, value: object):
         self.value = value
         self.left = None
         self.right = None
@@ -11,17 +20,45 @@ class Node:
     def __repr__(self):
         return str(self.value)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            raise TypeError(f"Unable to compare {type(self).__name__} and {type(other).__name__} objects")
         return self.value.__lt__(other.value)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
+        if not isinstance(other, type(self)):
+            raise TypeError(f"Unable to compare {type(self).__name__} and {type(other).__name__} objects")
         return self.value.__gt__(other.value)
 
 
 class BinaryTree:
+    """
+    BinaryTree class.
+    Implements Binary tree
+
+    Attributes:
+        _allowed_types_: tuple[object]
+          Manage what objects allowed to be stored inside tree elements
+          Objects must implement at least __lt__ and __gt__ methods
+
+    Methods:
+        __init__(root: _allowed_types_ | NoneType = None)
+          Constructor, create empty tree, or set root element as Node, or create root element with $root as value
+        add(value: _allowed_types_) -> None
+          Add elements to tree. Checks value type against _allowed_types_
+        remove(value: _allowed_types_) -> None
+          Search element in tree by $value and delete it
+        search(value: _allowed_types_) -> Node | None
+          Search element in tree and return it or None
+        print(node: Node | None = None, filter_none: bool = False) -> None
+          Print tree starting from $node or tree.root
+          If $filter_none is set, then mask all 'None' values to empty elements
+        __len__: allow to use build in len() function over object
+    """
+    # _allowed_types_ contains Node as an example
     _allowed_types_ = (Node, Number)
 
-    def __init__(self, root=None):
+    def __init__(self, root: object | None = None):
         if isinstance(root, (Node, NoneType)):
             # TODO: check node.value type against self._allowed_types_ ?
             self.root = root
@@ -30,12 +67,26 @@ class BinaryTree:
             self.add(root)
 
     def __len__(self):
+        """
+        reuse _get_as_rows_ method and count non-empty elements
+        """
         # TODO: is there a way to simplify this?
         return len([True for row in self._get_as_rows_(self.root) for el in row if el is not None])
 
-    def add(self, value):
+    def add(self, value: _allowed_types_) -> None:
+        """
+        Add elements to tree. Checks value type against _allowed_types_
+
+        Parameters:
+            value: Value to add
+
+        Raises:
+            TypeError: on incorrect value type
+            ValueError: if Node with value already in tree
+        """
         if not isinstance(value, self._allowed_types_):
-            raise TypeError(f"For value expected one of types {[t.__name__ for t in self._allowed_types_]}, got {type(value).__name__}")
+            allowed_type_names = [t.__name__ for t in self._allowed_types_]
+            raise TypeError(f"For value expected one of types {allowed_type_names}, got {type(value).__name__}")
         node, parent = self._search_(value, self.root)
         if node is None:
             el = Node(value)
@@ -49,7 +100,16 @@ class BinaryTree:
         else:
             raise ValueError(f"Element with value {value} already exists in the tree")
 
-    def remove(self, value):
+    def remove(self, value: _allowed_types_) -> None:
+        """
+        Search element in tree by $value and delete it
+
+        Parameters:
+            value: Value to remove
+
+        Raises:
+            ValueError: if Node with value not exist in tree
+        """
         node, parent = self._search_(value, self.root)
         if node:
             if node.left is None and node.right is None:
@@ -69,7 +129,19 @@ class BinaryTree:
         else:
             raise IndexError(f"Unable to delete value {value} that is not in the tree")
 
-    def _search_(self, value, node, parent=None):
+    def _search_(self, value: _allowed_types_,
+                 node: Node,
+                 parent: Node | None = None) -> tuple[Node | None, Node | None]:
+        """
+        Internal search method
+        Search for Node with $value and its parent
+        Search starts on $node
+
+        Parameters:
+            value: Value to search
+            node: from which Node start search
+            parent(optional): points on current node parent, used for recursion purposes
+        """
         if node is None or node.value == value:
             return node, parent
         if value < node.value:
@@ -77,11 +149,25 @@ class BinaryTree:
         else:
             return self._search_(value, node.right, node)
 
-    def search(self, value):
+    def search(self, value: _allowed_types_) -> Node | None:
+        """
+        Search element in tree and return it or None
+        Search always starts on tree root
+
+        Parameters:
+            value: Value to search
+        """
         return self._search_(value, self.root)[0]
 
     @staticmethod
-    def _get_as_rows_(node):
+    def _get_as_rows_(node: Node) -> list[list[_allowed_types_]]:
+        """
+        Represent tree as rows
+        Including None elements
+
+        Parameters:
+            node: from which Node start
+        """
         result = list()
         if node is not None:
             next_row = [node.left, node.right]
@@ -102,7 +188,13 @@ class BinaryTree:
         return result
 
     @staticmethod
-    def _max_(node):
+    def _max_(node: Node) -> tuple[Node | None, Node | None]:
+        """
+        Search max element in tree starting on $node
+
+         Parameters:
+            node: from which Node start
+        """
         parent = None
         if node:
             while node.right:
@@ -111,7 +203,13 @@ class BinaryTree:
         return node, parent
 
     @staticmethod
-    def _min_(node):
+    def _min_(node: Node) -> tuple[Node | None, Node | None]:
+        """
+        Search min element in tree starting on $node
+
+        Parameters:
+            node: from which Node start
+        """
         parent = None
         if node:
             while node.left:
@@ -119,7 +217,15 @@ class BinaryTree:
                 node = node.left
         return node, parent
 
-    def print(self, node=None, filter_none=False):
+    def print(self, node: Node | None = None, filter_none: bool = False) -> None:
+        """
+        Print tree starting from $node or tree root
+        If $filter_none is set, then mask all 'None' values to empty elements
+
+         Parameters:
+            node(optional): from which Node start search, use tree root if not set
+            filter_none(optional): mask all 'None' values to empty elements when set
+        """
         # TODO: is there a way to simplify this?
         if not node:
             node = self.root
