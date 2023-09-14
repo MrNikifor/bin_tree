@@ -46,9 +46,9 @@ class BinaryTree:
                     parent.left = el
                 else:
                     parent.right = el
-            return True
         else:
-            return False
+            # TODO: use other exception so external code can distinguish this error from instance check?
+            raise ValueError(f"Element with value {value} already exists in the tree")
 
     def remove(self, value):
         node, parent = self._search_(value, self.root)
@@ -56,7 +56,7 @@ class BinaryTree:
             if node.left is None and node.right is None:
                 new_child = None
             elif node.left and node.right:
-                right_min_node, right_min_node_parent = BinaryTree._min_(node)
+                right_min_node, right_min_node_parent = self._min_(node)
                 right_min_node_parent.left = None
                 right_min_node.left = node.left
                 right_min_node.right = node.right
@@ -67,9 +67,8 @@ class BinaryTree:
                 parent.left = new_child
             else:
                 parent.right = new_child
-            return True
         else:
-            return False
+            raise IndexError(f"Unable to delete value {value} that is not in the tree")
 
     def _search_(self, value, node, parent=None):
         if node is None or node.value == value:
