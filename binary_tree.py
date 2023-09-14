@@ -30,7 +30,8 @@ class BinaryTree:
             self.add(root)
 
     def __len__(self):
-        raise NotImplementedError
+        # TODO: is there a way to simplify this?
+        return len([True for row in self._get_as_rows_(self.root) for el in row if el is not None])
 
     def add(self, value):
         if not isinstance(value, self._allowed_types_):
@@ -126,6 +127,7 @@ if __name__ == '__main__':
     tree.add(1)
     tree.add(3)
     tree.add(2)
+    print(len(tree))
     print("---")
     tree.print()
     print("---")
