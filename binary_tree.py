@@ -35,7 +35,7 @@ class BinaryTree:
 
     def add(self, value):
         if not isinstance(value, self._allowed_types_):
-            raise ValueError(f"For value expected one of types {[t.__name__ for t in self._allowed_types_]}, got {type(value).__name__}")
+            raise TypeError(f"For value expected one of types {[t.__name__ for t in self._allowed_types_]}, got {type(value).__name__}")
         node, parent = self._search_(value, self.root)
         if node is None:
             el = Node(value)
@@ -47,7 +47,6 @@ class BinaryTree:
                 else:
                     parent.right = el
         else:
-            # TODO: use other exception so external code can distinguish this error from instance check?
             raise ValueError(f"Element with value {value} already exists in the tree")
 
     def remove(self, value):
