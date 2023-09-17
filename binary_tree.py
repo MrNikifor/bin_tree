@@ -4,13 +4,13 @@ from types import NoneType
 
 class Node:
     """
-    Basic tree Node class
-    Just store values
+    Базовый класс узлов дерева
+    Просто сохраняйте значения
 
-    Methods:
-        __init__: constructor
-        __repr__: Obj representation logic for print and str methods
-        __lt__ and __gt__: allow to use compare operations '<' and '>'
+    Методы:
+    __init__: конструктор
+    __repr__: Логика представления Obj для методов print и str
+    __lt__ и __gt__: позволяют использовать операции сравнения '<' и '>'
     """
     def __init__(self, value: object):
         self.value = value
@@ -33,39 +33,38 @@ class Node:
 
 class BinaryTree:
     """
-    BinaryTree class.
-    Implements Binary tree
+    Класс BinaryTree.
+    Реализует двоичное дерево
 
-    Attributes:
-        _allowed_types_: tuple[object]
-          Manage what objects allowed to be stored inside tree elements
-          Objects must implement at least __lt__ and __gt__ methods
-        _new_node_: type
-          Controls which object will provide tree node element
+    Атрибуты:
+    _allowed_types_: кортеж[объект]
+    Управляйте тем, какие объекты разрешено хранить внутри элементов дерева
+    Объекты должны реализовывать по крайней мере методы __lt__ и __gt__
+    _new_node_: введите
+    Управляет тем, какой объект будет предоставлять элемент узла дерева
 
-    Methods:
-        __init__(root: _allowed_types_ | NoneType = None)
-          Constructor, create empty tree, or set root element as Node, or create root element with $root as value
-        add(value: _allowed_types_) -> None
-          Add elements to tree. Checks value type against _allowed_types_
-        remove(value: _allowed_types_) -> None
-          Search element in tree by $value and delete it
-        search(value: _allowed_types_) -> Node | None
-          Search element in tree and return it or None
-        print(node: Node | None = None, filter_none: bool = False) -> None
-          Print tree starting from $node or tree.root
-          If $filter_none is set, then mask all 'None' values to empty elements
-        __len__: allow to use build in len() function over object
+    Методы:
+    __init__(root: _allowed_types_ | NoneType = Нет)
+    Конструктор, создайте пустое дерево, или установите корневой элемент в качестве узла, или создайте корневой элемент с $root в качестве значения
+    добавить(значение: _allowed_types_) -> Нет
+    Добавьте элементы в дерево. Проверяет тип значения на соответствие _allowed_types_
+    удалить(значение: _allowed_types_) -> Нет
+    элемента поиска в дереве по значению $ и удалить его
+    поиск(значение: _allowed_types_) -> Node | None
+    Элемент поиска в дереве и возвращает его или None
+    печать(node: Node | None = None, filter_none: bool = False) -> None
+    Печать дерева, начиная с $node или tree.root
+    Если задано значение $filter_none, то замаскируйте все значения 'None' под пустые элементы
+    __len__: разрешить использовать встроенную функцию len() над объектом
     """
-    # _allowed_types_ contains Node as an example
+    # _allowed_types_ содержит узел в качестве примера
     _allowed_types_ = (Node, Number)
-    # TODO: maybe use any pattern to create this type of elements? (this will work for now)
-    # TODO: bad naming?
+    # TODO: может быть, использовать какой-либо шаблон для создания элементов такого типа? (пока это будет работать)
     _new_node_ = Node
 
     def __init__(self, root: object | None = None):
         if isinstance(root, (Node, NoneType)):
-            # TODO: check node.value type against self._allowed_types_ ?
+            # TODO: проверьте тип node.value на соответствие self._ разрешенные_типы_ ?
             self.root = root
         else:
             self.root = None
@@ -73,21 +72,21 @@ class BinaryTree:
 
     def __len__(self):
         """
-        reuse _get_as_rows_ method and count non-empty elements
+        повторно используйте метод _get_as_rows_ и подсчитывайте непустые элементы
         """
-        # TODO: is there a way to simplify this?
+        # TODO: есть ли способ упростить это?
         return len([True for row in self._get_as_rows_(self.root) for el in row if el is not None])
 
     def add(self, value: _allowed_types_) -> None:
         """
-        Add elements to tree. Checks value type against _allowed_types_
+        Добавьте элементы в дерево. Проверяет тип значения на соответствие _allowed_types_
 
-        Parameters:
-            value: Value to add
+        Параметры:
+        значение: Значение для добавления
 
-        Raises:
-            TypeError: on incorrect value type
-            ValueError: if Node with value already in tree
+       Повышения:
+       TypeError: при неправильном типе значения
+       ValueError: если узел со значением уже находится в дереве
         """
         if not isinstance(value, self._allowed_types_):
             allowed_type_names = [t.__name__ for t in self._allowed_types_]
@@ -107,13 +106,13 @@ class BinaryTree:
 
     def remove(self, value: _allowed_types_) -> None:
         """
-        Search element in tree by $value and delete it
+        Найдите элемент в дереве по значению $ и удалите его
 
-        Parameters:
-            value: Value to remove
+        Параметры:
+            значение: Значение для удаления
 
-        Raises:
-            ValueError: if Node with value not exist in tree
+        Повышения:
+            ValueError: если узел со значением не существует в дереве
         """
         node, parent = self._search_(value, self.root)
         if node:
@@ -140,14 +139,14 @@ class BinaryTree:
                  node: Node,
                  parent: Node | None = None) -> tuple[Node | None, Node | None]:
         """
-        Internal search method
-        Search for Node with $value and its parent
-        Search starts on $node
+        Метод внутреннего
+        поиска Поиск узла со значением $ и его родительского элемента
+        Поиск начинается с $node
 
-        Parameters:
-            value: Value to search
-            node: from which Node start search
-            parent(optional): points on current node parent, used for recursion purposes
+        Параметры:
+            значение: Значение для поиска
+            узел: с какого узла начать поиск
+            родительский узел (необязательно): точки на текущем родительском узле, используемые для целей рекурсии
         """
         if node is None or node.value == value:
             return node, parent
@@ -158,22 +157,22 @@ class BinaryTree:
 
     def search(self, value: _allowed_types_) -> Node | None:
         """
-        Search element in tree and return it or None
-        Search always starts on tree root
+        Найдите элемент в дереве и верните его или нет
+        Поиск всегда начинается с корня дерева
 
-        Parameters:
-            value: Value to search
+        Параметры:
+            значение: Значение для поиска
         """
         return self._search_(value, self.root)[0]
 
     @staticmethod
     def _get_as_rows_(node: Node) -> list[list[_allowed_types_]]:
         """
-        Represent tree as rows
-        Including None elements
+        Представлять дерево в виде строк
+        Не включающий ни одного элемента
 
-        Parameters:
-            node: from which Node start
+        Параметры:
+            узел: с какого узла начинать
         """
         result = list()
         if node is not None:
@@ -197,10 +196,10 @@ class BinaryTree:
     @staticmethod
     def _max_(node: Node) -> tuple[Node | None, Node | None]:
         """
-        Search max element in tree starting on $node
+        Sпоиск максимального элемента в дереве, начинающегося с $node
 
-         Parameters:
-            node: from which Node start
+         Параметры:
+            узел: с какого узла начинать
         """
         parent = None
         if node:
@@ -212,10 +211,10 @@ class BinaryTree:
     @staticmethod
     def _min_(node: Node) -> tuple[Node | None, Node | None]:
         """
-        Search min element in tree starting on $node
+        Поиск минимального элемента в дереве, начинающегося с $node
 
-        Parameters:
-            node: from which Node start
+        Параметры:
+            узел: с какого узла начинать
         """
         parent = None
         if node:
@@ -226,12 +225,12 @@ class BinaryTree:
 
     def print(self, node: Node | None = None, filter_none: bool = False) -> None:
         """
-        Print tree starting from $node or tree root
-        If $filter_none is set, then mask all 'None' values to empty elements
+        Вывести дерево, начиная с $node или корня дерева
+        Если задано значение $filter_none, то замаскируйте все значения 'None' под пустые элементы
 
-         Parameters:
-            node(optional): from which Node start search, use tree root if not set
-            filter_none(optional): mask all 'None' values to empty elements when set
+         Параметры:
+            узел (необязательно): с какого узла начать поиск, используйте корень дерева, если не задано
+            filter_none(необязательно): маскирует все значения 'None' для пустых элементов при установке
         """
         # TODO: is there a way to simplify this?
         if not node:
@@ -240,8 +239,8 @@ class BinaryTree:
         if filter_none:
             tree_rows = [[el if el is not None else ' ' for el in row] for row in tree_rows]
         longest_row_len = max((len(row) for row in tree_rows), default=0)
-        # max tree element does not have to be the longest
-        # so search for longest by checking len(str(el))
+        # максимальный элемент дерева не обязательно должен быть самым длинным
+        # так что ищите самый длинный, проверяя len(str(el))
         longest_el_size = max((len(str(el)) for row in tree_rows for el in row), default=0)+1
         for row in tree_rows:
             print(''.join(str(el).center(longest_el_size*longest_row_len//len(row)) for el in row))
