@@ -120,10 +120,12 @@ class BinaryTree:
             if node.left is None and node.right is None:
                 new_child = None
             elif node.left and node.right:
-                right_min_node, right_min_node_parent = self._min_(node)
-                right_min_node_parent.left = None
+                right_min_node, right_min_node_parent = self._min_(node.right)
+                if right_min_node_parent:
+                    right_min_node_parent.left = None
                 right_min_node.left = node.left
-                right_min_node.right = node.right
+                if right_min_node != node.right:
+                    right_min_node.right = node.right
                 new_child = right_min_node
             else:
                 new_child = node.left if node.left else node.right
