@@ -40,6 +40,8 @@ class BinaryTree:
         _allowed_types_: tuple[object]
           Manage what objects allowed to be stored inside tree elements
           Objects must implement at least __lt__ and __gt__ methods
+        _new_node_: type
+          Controls which object will provide tree node element
 
     Methods:
         __init__(root: _allowed_types_ | NoneType = None)
@@ -57,6 +59,9 @@ class BinaryTree:
     """
     # _allowed_types_ contains Node as an example
     _allowed_types_ = (Node, Number)
+    # TODO: maybe use any pattern to create this type of elements? (this will work for now)
+    # TODO: bad naming?
+    _new_node_ = Node
 
     def __init__(self, root: object | None = None):
         if isinstance(root, (Node, NoneType)):
@@ -89,7 +94,7 @@ class BinaryTree:
             raise TypeError(f"For value expected one of types {allowed_type_names}, got {type(value).__name__}")
         node, parent = self._search_(value, self.root)
         if node is None:
-            el = Node(value)
+            el = self._new_node_(value)
             if parent is None:
                 self.root = el
             else:
